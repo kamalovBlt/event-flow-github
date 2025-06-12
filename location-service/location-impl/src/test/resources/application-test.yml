@@ -1,0 +1,7 @@
+mongock:
+  migrationScanPackage: com.technokratos.migration
+  transaction-enabled: false
+spring:
+  cloud:
+    consul:
+      enabled: false

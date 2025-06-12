@@ -1,0 +1,32 @@
+bootJar {
+    enabled = true
+}
+
+dependencies {
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    implementation project(':event-service:event-db')
+    implementation project(":event-service:event-api")
+    implementation project(':logger-starter')
+
+    implementation 'org.flywaydb:flyway-core:9.22.3'
+    implementation 'org.postgresql:postgresql:42.5.4'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery:4.2.1'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+}

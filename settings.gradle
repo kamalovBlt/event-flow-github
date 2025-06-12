@@ -1,0 +1,27 @@
+rootProject.name = 'event-flow'
+
+include 'auth-service'
+include 'auth-service:auth-api'
+include 'auth-service:auth-impl'
+
+include 'user-service'
+include 'user-service:user-api'
+include 'user-service:user-impl'
+include 'user-service:user-db'
+
+include 'event-service'
+include 'event-service:event-api'
+include 'event-service:event-impl'
+include 'event-service:event-db'
+
+include 'location-service'
+include 'location-service:location-api'
+include 'location-service:location-impl'
+
+include 'notification-service'
+include 'notification-service:notification-api'
+include 'notification-service:notification-impl'
+
+include 'gateway-service'
+include 'logger-starter'
+

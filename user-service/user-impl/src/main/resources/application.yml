@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: user-service
+  cloud:
+    consul:
+      discovery:
+        enabled: true
+      host: consul
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://auth-service:8080/.well-known/jwks.json
+
+
+springdoc:
+  api-docs:
+    path: /api/v1/user-service/v3/api-docs

@@ -1,0 +1,14 @@
+jwt:
+  access-token-validity: 30
+  refresh-token-validity: 1440
+  ...
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            ...
+  cloud:
+    consul:
+      enabled: false

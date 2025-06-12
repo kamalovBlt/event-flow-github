@@ -1,0 +1,4 @@
+springdoc:
+  api-docs-urls: >
+    http://mock-service-1/v3/api-docs,
+    http://mock-service-2/v3/api-docs

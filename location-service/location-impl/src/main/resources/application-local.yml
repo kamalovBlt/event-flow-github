@@ -1,0 +1,7 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://location-mongo:27017/location
+logging:
+  level:
+    root: debug

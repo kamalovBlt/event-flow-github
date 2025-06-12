@@ -1,0 +1,169 @@
+version: '3.9'
+
+services:
+  consul:
+    image: consul:1.15.4
+    container_name: consul
+    ports:
+      - "8500:8500"
+    command: agent -dev -client=0.0.0.0
+    networks:
+      - event-flow-network
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+    ports:
+      - "8081:8080"
+    depends_on:
+      - user-postgres
+      - consul
+    networks:
+      - event-flow-network
+
+  user-postgres:
+    image: postgres:15.12
+    container_name: user-postgres
+    environment:
+      POSTGRES_DB: user-service-db
+      POSTGRES_USER: local
+      POSTGRES_PASSWORD: locallocal
+    ports:
+      - "5432:5432"
+    volumes:
+      - user-postgres-data:/var/lib/postgresql/data
+    networks:
+      - event-flow-network
+
+  location-mongo:
+    image: mongo:6
+    container_name: location-mongo
+    command: [ "mongod", "--replSet", "rs0", "--bind_ip_all" ]
+    ports:
+      - "27017:27017"
+    volumes:
+      - location-mongo-data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - event-flow-network
+
+  location-service:
+    build:
+      context: ./location-service
+    container_name: location-service
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+    ports:
+      - "8082:8080"
+    depends_on:
+      - location-mongo
+      - consul
+    networks:
+      - event-flow-network
+
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+    ports:
+      - "8083:8080"
+    depends_on:
+      - consul
+      - auth-redis
+    networks:
+      - event-flow-network
+
+  auth-redis:
+    image: redis:7.0-alpine
+    container_name: auth-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --requirepass password
+    networks:
+      - event-flow-network
+
+  event-service:
+    build:
+      context: ./event-service
+    container_name: event-service
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+    ports:
+      - "8084:8080"
+    depends_on:
+      - consul
+      - event-postgres
+    networks:
+      - event-flow-network
+
+  event-postgres:
+    image: postgres:15.12
+    container_name: event-postgres
+    environment:
+      POSTGRES_DB: event-service-db
+      POSTGRES_USER: local
+      POSTGRES_PASSWORD: locallocal
+    ports:
+      - "5433:5432"
+    volumes:
+      - event-postgres-data:/var/lib/postgresql/data
+    networks:
+      - event-flow-network
+
+  gateway-service:
+    build:
+      context: ./gateway-service
+    container_name: gateway-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+    ports:
+      - "8080:8080"
+    depends_on:
+      - consul
+    networks:
+      - event-flow-network
+
+  notifications-rabbit:
+    image: rabbitmq:4.0-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_VHOST: local
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - event-flow-network
+
+  notification-service:
+    build:
+      context: ./notification-service
+    container_name: notification-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+    ports:
+      - "8085:8080"
+    depends_on:
+      - consul
+    networks:
+      - event-flow-network
+
+
+volumes:
+  location-mongo-data:
+  redis-data:
+  user-postgres-data:
+  event-postgres-data:
+
+networks:
+  event-flow-network:
+    driver: bridge

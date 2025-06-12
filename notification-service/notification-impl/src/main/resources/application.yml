@@ -1,0 +1,14 @@
+spring:
+
+  application:
+    name: gateway-service
+
+  cloud:
+    consul:
+      discovery:
+        enabled: true
+      host: consul
+
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl

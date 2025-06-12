@@ -1,0 +1,20 @@
+spring:
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: eventflowru@gmail.com
+    password: oyjr mvgn hwru wodh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  rabbitmq:
+    host: notification-rabbit
+    port: 5672
+    username: user
+    password: password
+    virtual-host: local

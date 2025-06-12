@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://user-postgres:5432/user-service-db
+    username: local
+    password: locallocal
+logging:
+  level:
+    root: debug

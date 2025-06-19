@@ -1,7 +1,12 @@
 package com.technokratos.controller;
 
+import com.technokratos.config.KafkaMockConfig;
 import com.technokratos.config.SecurityTestConfiguration;
+import com.technokratos.dto.AddressDto;
+import com.technokratos.dto.request.HallRequest;
 import com.technokratos.dto.request.LocationRequest;
+import com.technokratos.dto.request.RowRequest;
+import com.technokratos.dto.request.SeatRequest;
 import com.technokratos.dto.response.LocationResponse;
 import com.technokratos.dto.response.LocationShortResponse;
 import com.technokratos.model.Location;
@@ -22,11 +27,13 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = SecurityTestConfiguration.class
+        classes = {SecurityTestConfiguration.class, KafkaMockConfig.class}
 )
 @ActiveProfiles("test")
 @Testcontainers
@@ -46,7 +53,7 @@ public class LocationControllerIntegrationTest {
         registry.add("spring.data.mongodb.uri", () -> "%s/location".formatted(mongoDBContainer.getConnectionString()));
     }
 
-    private String testLocationId;
+    private Location testLocation;
 
     @BeforeEach
     void setUp() {
@@ -60,13 +67,14 @@ public class LocationControllerIntegrationTest {
                 10.0,
                 20.0,
                 null);
-        testLocationId = locationRepository.save(location).getId();
+        testLocation = locationRepository.save(location);
+        System.out.println(testLocation.getId());
     }
 
     @Test
     void shouldFindById() {
         ResponseEntity<LocationResponse> response = restTemplate.exchange(
-                "/api/v1/location-service/locations/%s".formatted(testLocationId),
+                "/api/v1/location-service/locations/%s".formatted(testLocation.getId()),
                 HttpMethod.GET,
                 null,
                 LocationResponse.class
@@ -82,8 +90,13 @@ public class LocationControllerIntegrationTest {
                 1L,
                 "New Description",
                 25.0, 35.0,
-                null,
-                null);
+                new AddressDto("123 Main St", "City", "State", "12345"),
+                List.of(
+                        new HallRequest("Hall 1",
+                                List.of(new RowRequest(1, List.of(new SeatRequest(1)))))
+                )
+
+        );
 
         ResponseEntity<String> response = restTemplate.exchange(
                 "/api/v1/location-service/locations",
@@ -100,18 +113,30 @@ public class LocationControllerIntegrationTest {
         assertEquals("New Location", savedLocation.getName());
     }
 
+
     @Test
     void shouldUpdateLocation() {
-        LocationRequest request = new LocationRequest("Updated Location", 1L,"Updated Description", 30.0, 40.0, null, null);
-        restTemplate.put("/api/v1/location-service/locations/%s".formatted(testLocationId), request);
-        Location updatedLocation = locationRepository.findById(testLocationId).orElseThrow();
-        assertEquals("Updated Location", updatedLocation.getName());
+        LocationRequest request = new LocationRequest(
+                "New Location",
+                1L,
+                "New Description",
+                25.0, 35.0,
+                new AddressDto("123 Main St", "City", "State", "12345"),
+                List.of(
+                        new HallRequest("Hall 1",
+                                List.of(new RowRequest(1, List.of(new SeatRequest(1)))))
+                )
+        );
+        restTemplate.put("/api/v1/location-service/locations/%s".formatted(testLocation.getId()), request);
+        System.out.println(locationRepository.findAll());
+        Location updatedLocation = locationRepository.findById(testLocation.getId()).orElseThrow();
+        assertEquals("New Location", updatedLocation.getName());
     }
 
     @Test
     void shouldDeleteLocation() {
-        restTemplate.delete("/api/v1/location-service/locations/%s".formatted(testLocationId));
-        assertFalse(locationRepository.existsById(testLocationId));
+        restTemplate.delete("/api/v1/location-service/locations/%s".formatted(testLocation.getId()));
+        assertFalse(locationRepository.existsById(testLocation.getId()));
     }
 
     @Test
@@ -122,5 +147,16 @@ public class LocationControllerIntegrationTest {
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().length);
         assertEquals("Test Location", response.getBody()[0].name());
+    }
+
+    @Test
+    void shouldGetNotFoundForInvalidId() {
+        ResponseEntity<LocationResponse> response = restTemplate.exchange(
+                "/api/v1/location-service/locations/invalid-id",
+                HttpMethod.GET,
+                null,
+                LocationResponse.class
+        );
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

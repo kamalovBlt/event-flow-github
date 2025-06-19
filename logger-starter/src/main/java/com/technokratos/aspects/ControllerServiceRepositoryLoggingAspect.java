@@ -13,20 +13,19 @@ public class ControllerServiceRepositoryLoggingAspect {
     public Object logController(ProceedingJoinPoint joinPoint) throws Throwable {
 
         String methodName = joinPoint.getSignature().getName();
-        Object[] args = joinPoint.getArgs();
         String className = joinPoint.getTarget().getClass().getSimpleName();
 
-        log.info("Controller {} method {}-Request with args: {}", className, methodName, args);
+        log.debug("Controller {} method {} ", className, methodName);
 
         Object result;
         try {
             result = joinPoint.proceed();
         } catch (Throwable e) {
-            log.error("Controller {} method {} threw an exception: {}",className, methodName, e.getMessage(), e);
+            log.error("Controller {} method {} threw an exception: {}", className, methodName, e.getMessage(), e);
             throw e;
         }
 
-        log.info("Controller {} method {}-Response: {}", className, methodName, result);
+        log.debug("Controller {} method {}", className, methodName);
         return result;
     }
 
@@ -34,10 +33,9 @@ public class ControllerServiceRepositoryLoggingAspect {
     public Object logService(ProceedingJoinPoint joinPoint) throws Throwable {
 
         String methodName = joinPoint.getSignature().getName();
-        Object[] args = joinPoint.getArgs();
         String className = joinPoint.getTarget().getClass().getSimpleName();
 
-        log.debug("Service {} method {}-Request with args: {}", className, methodName, args);
+        log.debug("Service {} method {}", className, methodName);
 
         Object result;
         try {
@@ -47,7 +45,7 @@ public class ControllerServiceRepositoryLoggingAspect {
             throw e;
         }
 
-        log.debug("Service {} method {}-Response: {}",className, methodName, result);
+        log.debug("Service {} method {}",className, methodName);
         return result;
     }
 
@@ -58,9 +56,8 @@ public class ControllerServiceRepositoryLoggingAspect {
         String className;
         className = targetClass.getSimpleName();
         String methodName = joinPoint.getSignature().getName();
-        Object[] args = joinPoint.getArgs();
 
-        log.debug("Repository {} method {}-Request with args: {}", className, methodName, args);
+        log.debug("Repository {} method {}", className, methodName);
 
         long start = System.currentTimeMillis();
         long duration;
@@ -74,7 +71,7 @@ public class ControllerServiceRepositoryLoggingAspect {
             throw e;
         }
         duration = System.currentTimeMillis() - start;
-        log.debug("Repository {} method {}-Response after {} ms: {}",className, methodName, duration, result);
+        log.warn("Repository {} method {}-Response after {}",className, methodName, duration);
         return result;
     }
 

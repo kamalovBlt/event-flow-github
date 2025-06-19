@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ArtistRepository {
-    long save(Artist artist);
+    Optional<Long> save(Artist artist);
+
+    List<Artist> findAll(String keywords, int page, int size);
 
     Optional<Artist> findById(Long id);
 
@@ -15,4 +17,10 @@ public interface ArtistRepository {
     void update(Artist artist);
 
     void deleteById(Long id);
+
+    Optional<Long> findCreatorIdByArtistId(Long artistId);
+
+    boolean existsById(Long id);
+
+    boolean existsByNickname(String nickname);
 }

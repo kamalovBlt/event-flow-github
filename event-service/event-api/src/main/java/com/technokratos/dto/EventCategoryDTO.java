@@ -4,5 +4,5 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Категория мероприятия")
 public enum EventCategoryDTO {
-    CONCERT, SPORT, CULTURAL
+    NO_CATEGORY, CONCERT, SPORT, CULTURAL
 }

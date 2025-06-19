@@ -13,6 +13,7 @@ public interface HallMapper {
     @Mapping(source = "row", target = "rows")
     Hall toEntity(HallRequest request);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "rows", target = "row")
     HallResponse toResponse(Hall entity);
 }

@@ -2,6 +2,12 @@ spring:
   data:
     mongodb:
       uri: mongodb://location-mongo:27017/location
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      transaction-id-prefix: "location-service-"
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 logging:
   level:
     root: debug

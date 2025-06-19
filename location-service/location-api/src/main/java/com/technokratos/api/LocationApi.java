@@ -144,9 +144,7 @@ public interface LocationApi {
             }
 
     )
-    String save(@Valid
-              @RequestBody
-              LocationRequest locationRequest);
+    String save(@Valid @RequestBody LocationRequest locationRequest);
 
     @PutMapping("/{location-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -185,9 +183,7 @@ public interface LocationApi {
                     required = true
             )
             @PathVariable("location-id") String id,
-            @Valid
-            @RequestBody
-            LocationRequest locationRequest);
+            @Valid @RequestBody LocationRequest locationRequest);
 
 
     @DeleteMapping("/{location-id}")

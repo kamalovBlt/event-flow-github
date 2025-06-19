@@ -5,3 +5,6 @@ spring:
   cloud:
     consul:
       enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration

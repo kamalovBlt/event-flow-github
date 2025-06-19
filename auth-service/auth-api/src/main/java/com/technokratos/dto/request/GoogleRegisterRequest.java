@@ -19,6 +19,7 @@ public record GoogleRegisterRequest(
                 format = "email"
         )
         @Email(message = "Неправильный формат электронной почты")
+        @NotNull
         String email,
         @Schema(description = "Имя пользователя")
         @NotBlank(message = "Имя пользователя не может быть пустым")

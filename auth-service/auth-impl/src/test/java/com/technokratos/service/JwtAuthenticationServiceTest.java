@@ -5,15 +5,19 @@ import com.technokratos.client.dto.GoogleUserInfo;
 import com.technokratos.dto.AuthProviderDTO;
 import com.technokratos.dto.RoleDTO;
 import com.technokratos.dto.request.AuthenticationRequest;
+import com.technokratos.dto.request.VerificationRequest;
 import com.technokratos.dto.response.AuthenticationResponse;
 import com.technokratos.dto.response.UserDetailsResponse;
 import com.technokratos.exception.BadCredentialsException;
 import com.technokratos.exception.PasswordNotMatchesException;
 import com.technokratos.exception.UserNotFoundException;
 import com.technokratos.model.JwtToken;
+import com.technokratos.repository.api.VerifyCodeRepository;
 import com.technokratos.service.api.GoogleOAuthService;
 import com.technokratos.service.api.JwtService;
+import com.technokratos.service.api.VerifyCodeSender;
 import com.technokratos.service.impl.JwtAuthenticationService;
+import com.technokratos.util.VerifyCodeGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,34 +47,40 @@ public class JwtAuthenticationServiceTest {
 
     AuthenticationRequest authenticationRequest = new AuthenticationRequest("test@test.com", "password");
 
+    VerifyCodeGenerator verifyCodeGenerator = new VerifyCodeGenerator();
+
+    @Mock
+    VerifyCodeSender verifyCodeSender;
+
+    @Mock
+    VerifyCodeRepository verifyCodeRepository;
+
+
     @BeforeEach
     void setUp() {
         jwtAuthenticationService = new JwtAuthenticationService(
                 jwtService,
                 passwordEncoder,
                 userClient,
-                googleOAuthService
+                googleOAuthService,
+                verifyCodeSender,
+                verifyCodeGenerator,
+                verifyCodeRepository
         );
     }
 
 
     @Test
-    void loginShouldReturnValidAuthenticationResponse() {
+    void loginShouldSendVerifyCodeWhenValidRequest() {
         long id = 1;
         String email = "test@test.com";
         String password = "password";
         List<String> roles = List.of("USER");
         AuthenticationRequest authenticationRequest = new AuthenticationRequest(email, password);
         prepareUserClient(id, email, passwordEncoder.encode(password), roles);
-        prepareJwtServiceGenerateTokens(id, email, roles);
-        AuthenticationResponse authenticationResponse = jwtAuthenticationService.login(authenticationRequest);
-        assertNotNull(authenticationResponse);
-        String accessToken = authenticationResponse.accessToken();
-        String refreshToken = authenticationResponse.refreshToken();
-        assertNotNull(accessToken);
-        assertNotNull(refreshToken);
-        assertEquals("access", accessToken);
-        assertEquals("refresh", refreshToken);
+        doNothing().when(verifyCodeSender).send(anyString(), anyString());
+        jwtAuthenticationService.login(authenticationRequest);
+        verify(verifyCodeSender).send(anyString(), anyString());
     }
 
     @Test
@@ -95,6 +105,61 @@ public class JwtAuthenticationServiceTest {
         assertNotNull(refreshToken);
         assertEquals("access", accessToken);
         assertEquals("refresh", refreshToken);
+    }
+
+    @Test
+    void verifyShouldReturnValidAuthenticationResponseWhenValidCode() {
+        String email = "test@test.com";
+        String code = "123456";
+        long userId = 1L;
+        List<String> roles = List.of("USER");
+
+        VerificationRequest verificationRequest = new VerificationRequest(email, code);
+
+        when(verifyCodeRepository.findByEmail(email)).thenReturn(code);
+        prepareUserClient(userId, email, "encodedPassword", roles);
+        prepareJwtServiceGenerateTokens(userId, email, roles);
+
+        AuthenticationResponse response = jwtAuthenticationService.verify(verificationRequest);
+
+        assertNotNull(response);
+        assertEquals("access", response.accessToken());
+        assertEquals("refresh", response.refreshToken());
+        verify(verifyCodeRepository).findByEmail(email);
+        verify(jwtService).generateTokens(userId, email, roles);
+    }
+
+    @Test
+    void verifyShouldThrowBadCredentialsExceptionWhenCodeNotFound() {
+        String email = "test@test.com";
+        String code = "123456";
+
+        VerificationRequest verificationRequest = new VerificationRequest(email, code);
+
+        when(verifyCodeRepository.findByEmail(email)).thenReturn(null);
+
+        assertThrows(BadCredentialsException.class, () ->
+                jwtAuthenticationService.verify(verificationRequest));
+
+        verify(verifyCodeRepository).findByEmail(email);
+        verifyNoInteractions(jwtService);
+    }
+
+    @Test
+    void verifyShouldThrowBadCredentialsExceptionWhenCodeNotMatches() {
+        String email = "test@test.com";
+        String storedCode = "654321";
+        String providedCode = "123456";
+
+        VerificationRequest verificationRequest = new VerificationRequest(email, providedCode);
+
+        when(verifyCodeRepository.findByEmail(email)).thenReturn(storedCode);
+
+        assertThrows(BadCredentialsException.class, () ->
+                jwtAuthenticationService.verify(verificationRequest));
+
+        verify(verifyCodeRepository).findByEmail(email);
+        verifyNoInteractions(jwtService);
     }
 
     @Test

@@ -6,6 +6,9 @@ import java.util.List;
 
 @Schema(description = "Модель зала для ответа")
 public record HallResponse(
+        @Schema(description = "ID зала")
+        String id,
+
         @Schema(description = "Название зала")
         String name,
 

@@ -8,6 +8,7 @@ import com.technokratos.dto.response.UserResponse;
 import com.technokratos.mapper.UserMapper;
 import com.technokratos.model.User;
 import com.technokratos.service.interfaces.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ public class UserController implements UserApi {
     private final UserMapper userMapper;
 
     @Override
-    @PreAuthorize("hasAuthority('ADMIN') or (#id == principal.claims['user-id'] and hasAuthority('USER'))")
+    @PreAuthorize("isAuthenticated() and (hasAuthority('ADMIN') or (@baseUserService.isOwner(#id, authentication) and hasAuthority('USER')))")
     public UserResponse findById(Long id) {
         return userMapper.toResponse(userService.findById(id));
     }
@@ -41,28 +42,28 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public long save(UserRequest userRequest) {
+    public long save(@Valid UserRequest userRequest) {
         User user = userMapper.toUser(userRequest);
         return userService.save(user);
     }
 
     @Override
-    public long saveOauthUser(UserWithOAuthRequest userWithOAuthRequest) {
+    public long saveOauthUser(@Valid UserWithOAuthRequest userWithOAuthRequest) {
         User user = userMapper.toUser(userWithOAuthRequest);
         return userService.save(user);
     }
 
 
     @Override
-    @PreAuthorize("hasAuthority('USER') and #id == principal")
-    public void update(Long id, UserRequest userRequest) {
+    @PreAuthorize("isAuthenticated() and (@baseUserService.isOwner(#id, authentication) and hasAuthority('USER'))")
+    public void update(Long id, @Valid UserRequest userRequest) {
         User user = userMapper.toUser(userRequest);
         user.setId(id);
         userService.update(user);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('USER') and #id == principal")
+    @PreAuthorize("isAuthenticated() and (@baseUserService.isOwner(#id, authentication) and hasAuthority('USER'))")
     public void delete(Long id) {
         userService.delete(id);
     }

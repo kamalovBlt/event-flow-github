@@ -1,14 +1,10 @@
 package com.technokratos.model;
 
-import lombok.*;
+public enum EventCategory {
 
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class EventCategory {
-    private Long id;
-    private String name;
-    private boolean deleted;
+    NO_CATEGORY,
+    CONCERT,
+    SPORT,
+    CULTURAL
+
 }

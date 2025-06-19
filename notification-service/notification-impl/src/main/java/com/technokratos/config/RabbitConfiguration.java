@@ -8,10 +8,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile({"!test"})
 public class RabbitConfiguration {
 
 
@@ -50,6 +48,21 @@ public class RabbitConfiguration {
                 .bind(emailAdvertisementQueue)
                 .to(notificationsDirectExchange)
                 .with(RabbitVariables.EMAIL_ADVERTISEMENT_ROUTING_KEY);
+    }
+
+    @Bean
+    public Queue emailCodeQueue() {
+        return new Queue(RabbitVariables.EMAIL_CODE_QUEUE_NAME);
+    }
+
+    @Bean
+    public Binding emailCodeBinding(
+            Queue emailCodeQueue, DirectExchange notificationsDirectExchange
+    ) {
+        return BindingBuilder
+                .bind(emailCodeQueue)
+                .to(notificationsDirectExchange)
+                .with(RabbitVariables.EMAIL_CODE_ROUTING_KEY);
     }
 
 }

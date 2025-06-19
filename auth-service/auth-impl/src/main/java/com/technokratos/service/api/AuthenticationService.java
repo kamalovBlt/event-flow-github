@@ -2,11 +2,14 @@ package com.technokratos.service.api;
 
 import com.technokratos.dto.request.AuthenticationRequest;
 import com.technokratos.dto.request.GoogleRegisterRequest;
+import com.technokratos.dto.request.VerificationRequest;
 import com.technokratos.dto.response.AuthenticationResponse;
 
 public interface AuthenticationService {
 
-    AuthenticationResponse login(AuthenticationRequest authenticationRequest);
+    void login(AuthenticationRequest authenticationRequest);
+
+    AuthenticationResponse verify(VerificationRequest verificationRequest);
 
     AuthenticationResponse refresh(String refreshToken);
 

@@ -10,19 +10,15 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Ticket {
+    private Long id;
     private Long userId;
     private Long eventId;
     private String locationId;
-    private Long hallId;
-    private Long rowId;
-    private Long seatId;
-    private Integer categoryId;
+    private String hallId;
+    private Long rowNum;
+    private Long seatNum;
+    private TicketCategory ticketCategory;
     private BigDecimal cost;
+    private boolean isSell;
     private boolean deleted;
-
-    private TicketId id;
-
-    public void postLoad() {
-        this.id = new TicketId(userId, eventId, locationId, hallId, rowId, seatId);
-    }
 }

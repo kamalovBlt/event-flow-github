@@ -16,10 +16,12 @@ import com.technokratos.exception.BadCredentialsException;
 import com.technokratos.model.JwtToken;
 import com.technokratos.repository.impl.RedisRefreshTokenRepository;
 import com.technokratos.service.api.JwtService;
+import com.technokratos.service.api.VerifyCodeSender;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
@@ -69,6 +71,9 @@ public class AuthenticationControllerIntegrationTest {
     UserClient userClient;
 
     @MockitoBean
+    VerifyCodeSender verifyCodeSender;
+
+    @MockitoBean
     GoogleOAuthClient googleOAuthClient;
 
     @MockitoBean
@@ -89,24 +94,23 @@ public class AuthenticationControllerIntegrationTest {
                 new UserDetailsResponse(1L, "test@test.com", "1234", List.of(RoleDTO.USER), AuthProviderDTO.LOCAL)
         );
 
-        ResponseEntity<AuthServiceErrorResponse> response = testRestTemplate.exchange(
+        ResponseEntity<Void> response = testRestTemplate.exchange(
                 "/api/v1/auth-service/auth/login",
                 HttpMethod.POST,
-                new HttpEntity<>(new AuthenticationRequest("test@test.com", "123")),
-                AuthServiceErrorResponse.class
+                new HttpEntity<>(new AuthenticationRequest("test@test.com", "123123")),
+                new ParameterizedTypeReference<>() {
+                }
         );
-        assertTrue(response.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(401)));
-        AuthServiceErrorResponse body = response.getBody();
-        assertNotNull(body);
+        assertTrue(response.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
     }
 
     @Test
-    void loginWithNonExistingEmailShouldReturnNotFound() {
+    void loginWithNonExistingEmailShouldReturnBadRequest() {
         when(userClient.findByEmail("test@test.com")).thenThrow(new BadCredentialsException("NOT FOUND"));
         ResponseEntity<AuthServiceErrorResponse> response = testRestTemplate.exchange(
                 "/api/v1/auth-service/auth/login",
                 HttpMethod.POST,
-                new HttpEntity<>(new AuthenticationRequest("test@test.com", "123")),
+                new HttpEntity<>(new AuthenticationRequest("test@test.com", "123123")),
                 AuthServiceErrorResponse.class
         );
         assertTrue(response.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
@@ -117,18 +121,15 @@ public class AuthenticationControllerIntegrationTest {
     @Test
     void loginWithCorrectCredentialsShouldReturnSuccess() {
         when(userClient.findByEmail("test@test.com")).thenReturn(
-                new UserDetailsResponse(1L, "test@test.com", passwordEncoder.encode("123"), List.of(RoleDTO.USER), AuthProviderDTO.LOCAL)
+                new UserDetailsResponse(1L, "test@test.com", passwordEncoder.encode("123123"), List.of(RoleDTO.USER), AuthProviderDTO.LOCAL)
         );
-        ResponseEntity<AuthenticationResponse> response = testRestTemplate.exchange(
+        ResponseEntity<Void> response = testRestTemplate.exchange(
                 "/api/v1/auth-service/auth/login",
                 HttpMethod.POST,
-                new HttpEntity<>(new AuthenticationRequest("test@test.com", "123")),
-                AuthenticationResponse.class
+                new HttpEntity<>(new AuthenticationRequest("test@test.com", "123123")),
+                new ParameterizedTypeReference<Void>() {}
         );
         assertTrue(response.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(201)));
-        AuthenticationResponse authenticationResponse = response.getBody();
-        assertNotNull(authenticationResponse.accessToken());
-        assertNotNull(authenticationResponse.refreshToken());
     }
 
     @Test

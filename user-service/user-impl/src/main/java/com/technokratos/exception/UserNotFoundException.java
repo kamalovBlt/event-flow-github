@@ -3,13 +3,10 @@ package com.technokratos.exception;
 import lombok.Getter;
 
 @Getter
-public class UserNotFoundException extends RuntimeException {
-
-    private Long userId;
+public class UserNotFoundException extends UserServiceException {
 
     public UserNotFoundException(String message, Long userId) {
-        super(message);
-        this.userId = userId;
+        super(message, userId);
     }
 
     public UserNotFoundException(String message) {

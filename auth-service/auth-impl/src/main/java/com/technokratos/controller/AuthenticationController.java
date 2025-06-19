@@ -2,10 +2,7 @@ package com.technokratos.controller;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.technokratos.api.AuthenticationApi;
-import com.technokratos.dto.request.AuthenticationRequest;
-import com.technokratos.dto.request.GoogleAuthorizationCodeRequest;
-import com.technokratos.dto.request.GoogleRegisterRequest;
-import com.technokratos.dto.request.RefreshTokenRequest;
+import com.technokratos.dto.request.*;
 import com.technokratos.dto.response.AuthenticationResponse;
 import com.technokratos.service.api.AuthenticationService;
 import com.technokratos.service.api.JwtService;
@@ -22,8 +19,13 @@ public class AuthenticationController implements AuthenticationApi {
     private final JwtService jwtService;
 
     @Override
-    public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
-        return authenticationService.login(authenticationRequest);
+    public void login(AuthenticationRequest authenticationRequest) {
+        authenticationService.login(authenticationRequest);
+    }
+
+    @Override
+    public AuthenticationResponse verify(VerificationRequest verificationRequest) {
+        return authenticationService.verify(verificationRequest);
     }
 
     @Override

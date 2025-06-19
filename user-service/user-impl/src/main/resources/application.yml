@@ -1,6 +1,8 @@
 spring:
   application:
     name: user-service
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.xml
   cloud:
     consul:
       discovery:

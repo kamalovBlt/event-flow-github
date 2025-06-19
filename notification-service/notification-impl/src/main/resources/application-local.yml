@@ -3,8 +3,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: eventflowru@gmail.com
-    password: oyjr mvgn hwru wodh
+    username: mail.eventflow@gmail.com
+    password: hgrr vafg yxgr mkle
     properties:
       mail:
         smtp:
@@ -13,7 +13,7 @@ spring:
             enable: true
 
   rabbitmq:
-    host: notification-rabbit
+    host: notifications-rabbit
     port: 5672
     username: user
     password: password

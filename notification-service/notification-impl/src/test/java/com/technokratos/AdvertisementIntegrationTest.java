@@ -86,17 +86,23 @@ public class AdvertisementIntegrationTest {
     }
 
     @Test
-    void sentNotValidEventInfoDTOShouldThrowMethodArgumentNotValidException() throws InterruptedException {
-        EventInfoDTO eventInfoDTO = new EventInfoDTO(
-                "test",
+    void sentNotValidEventInfoDTOShouldNotSendEmail() throws InterruptedException {
+        MimeMessage mimeMessage = mock(MimeMessage.class);
+        when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        EventInfoDTO invalidDto = new EventInfoDTO(
+                "invalid-email",
                 "test",
                 LocalDateTime.now(),
-                List.of("123", "456"),
-                "http://localhost:8080/123"
+                List.of("artist"),
+                "http://localhost:8080/test"
         );
-        rabbitTemplate.convertAndSend(RabbitVariables.NOTIFICATION_EXCHANGE_NAME, RabbitVariables.EMAIL_ADVERTISEMENT_ROUTING_KEY, eventInfoDTO);
-
+        rabbitTemplate.convertAndSend(
+                RabbitVariables.NOTIFICATION_EXCHANGE_NAME,
+                RabbitVariables.EMAIL_ADVERTISEMENT_ROUTING_KEY,
+                invalidDto
+        );
+        Thread.sleep(1000);
+        verify(javaMailSender, never()).send(any(MimeMessage.class));
     }
-
 
 }

@@ -2,8 +2,9 @@ package com.technokratos.dto.request.ticket;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -13,15 +14,16 @@ import java.util.List;
 public record TicketsRequest(
 
         @Schema(description = "ID локации")
-        @NotNull
-        Long locationId,
+        @NotBlank
+        String locationId,
 
         @Schema(description = "ID зала локации")
-        @NotNull
-        Long hallId,
+        @NotBlank
+        String hallId,
 
         @ArraySchema(schema = @Schema(description = "Список билетов", implementation = TicketRequest.class))
         @NotEmpty
+        @Valid
         List<TicketRequest> tickets
 
 ) {

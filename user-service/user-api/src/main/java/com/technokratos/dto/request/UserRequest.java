@@ -19,6 +19,8 @@ public record UserRequest(
                 format = "email"
         )
         @Email(message = "Неправильный формат электронной почты")
+        @Size(max = 320, message = "Почта не может быть длиннее 320 символов")
+        @NotNull
         String email,
 
         @Schema(
@@ -32,16 +34,19 @@ public record UserRequest(
 
         @Schema(description = "Имя пользователя")
         @NotBlank(message = "Имя пользователя не может быть пустым")
+        @Size(max = 150, message = "Имя не может быть длиннее 150 символов")
         String firstName,
 
         @Schema(description = "Фамилия пользователя")
         @NotBlank(message = "Фамилия пользователя не может быть пустым")
+        @Size(max = 150, message = "Фамилия не может быть длиннее 150 символов")
         String lastName,
 
         @Schema(
                 description = "Город пользователя",
                 defaultValue = "null"
         )
+        @Size(max = 100, message = "Город не может быть длиннее 100 символов")
         String city,
 
         @Schema(

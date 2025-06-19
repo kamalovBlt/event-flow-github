@@ -18,6 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAllByDeletedFalse();
 
+    boolean existsByEmailAndDeletedFalse(String email);
+
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE User u SET u.deleted = true WHERE u.id = :id")

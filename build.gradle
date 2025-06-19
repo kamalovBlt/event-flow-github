@@ -34,6 +34,18 @@ subprojects {
     ext {
         bootVersion = '3.4.4'
         lombokVersion = '1.18.36'
+        swaggerVersion = '2.8.6'
+        nimbusJwtVersion = '10.0.2'
+        flywayVersion = '9.22.3'
+        postgresVersion = '42.5.4'
+        mongockVersion = '5.3.5'
+        mapstructVersion = '1.5.5.Final'
+        jakartaValidationApiVersion = '3.0.2'
+        springCloudVersion = '2024.0.1'
+        testContainersVersion = '1.19.3'
+        liquibaseVersion = '4.31.0'
+        kafkaVersion = '3.2.4'
+        awsSdkVersion = '2.29.33'
     }
 
     configurations {
@@ -43,8 +55,23 @@ subprojects {
     }
 
     dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom "org.testcontainers:testcontainers-bom:${testContainersVersion}"
+        }
         dependencies {
             dependency "org.projectlombok:lombok:${lombokVersion}"
+            dependency "org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerVersion}"
+            dependency "org.springdoc:springdoc-openapi-starter-webflux-ui:${swaggerVersion}"
+            dependency "com.nimbusds:nimbus-jose-jwt:${nimbusJwtVersion}"
+            dependency "org.flywaydb:flyway-core:${flywayVersion}"
+            dependency "org.postgresql:postgresql:${postgresVersion}"
+            dependency "io.mongock:mongock-springboot:${mongockVersion}"
+            dependency "io.mongock:mongodb-sync-v4-driver:${mongockVersion}"
+            dependency "org.mapstruct:mapstruct:${mapstructVersion}"
+            dependency "jakarta.validation:jakarta.validation-api:${jakartaValidationApiVersion}"
+            dependency "software.amazon.awssdk:aws-sdk-java:${awsSdkVersion}"
+            dependency "software.amazon.awssdk:apache-client:${awsSdkVersion}"
         }
     }
 

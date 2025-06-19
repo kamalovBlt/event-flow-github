@@ -4,30 +4,37 @@ import com.technokratos.api.EventApi;
 import com.technokratos.dto.EventCategoryDTO;
 import com.technokratos.dto.request.EventRequest;
 import com.technokratos.dto.request.sort.SortParameterRequest;
-import com.technokratos.dto.response.EventResponse;
+import com.technokratos.dto.response.event.EventResponse;
+import com.technokratos.service.interfaces.EventService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class EventController implements EventApi {
 
+    private final EventService eventService;
+
     @Override
+    @Validated
     public List<EventResponse> find(
-            SortParameterRequest sortParameter,
-            LocalDateTime date1,
-            LocalDateTime date2,
-            List<EventCategoryDTO> categories,
-            String keywords
-    ) {
+            @Valid SortParameterRequest sortParameter,
+            LocalDateTime date1, LocalDateTime date2,
+            @Valid List<EventCategoryDTO> categories,
+            String keywords,
+            int page, int size) {
         return List.of();
     }
 
     @Override
     public EventResponse findById(Long eventId) {
-        return null;
+        return eventService.findById(eventId);
     }
 
     @Override
@@ -38,25 +45,21 @@ public class EventController implements EventApi {
 
     @Override
     @PreAuthorize("hasAnyAuthority('ORGANIZER','ADMIN')")
-    public Long save(EventRequest eventRequest) {
-        return 0L;
+    @Validated
+    public Long save(@Valid EventRequest eventRequest) {
+        return eventService.save(eventRequest);
     }
 
     @Override
-    @PreAuthorize("hasAnyAuthority('ORGANIZER','ADMIN')")
-    /*TODO: @PreAuthorize("(hasAuthority('ORGANIZER') and @eventService.isOwner(#id, principal)) or hasAuthority('ADMIN')")
-    тут #id ID мероприятия, principal это ID пользователя, он автоматически берется
-     */
-    public void update(Long eventId, EventRequest eventRequest) {
-
+    @PreAuthorize("(isAuthenticated() and hasAuthority('ORGANIZER') and @eventServiceImpl.isCreator(#eventId, authentication)) or hasAuthority('ADMIN')")
+    @Validated
+    public void update(Long eventId, @Valid EventRequest eventRequest) {
+        eventService.update(eventId, eventRequest);
     }
 
     @Override
-    @PreAuthorize("hasAnyAuthority('ORGANIZER','ADMIN')")
-    /*TODO: @PreAuthorize("(hasAuthority('ORGANIZER') and @eventService.isOwner(#id, principal)) or hasAuthority('ADMIN')")
-    тут #id ID мероприятия, principal это ID пользователя, он автоматически берется
-     */
+    @PreAuthorize("(isAuthenticated() and hasAuthority('ORGANIZER') and @eventServiceImpl.isCreator(#eventId, authentication)) or hasAuthority('ADMIN')")
     public void delete(Long eventId) {
-
+        eventService.deleteById(eventId);
     }
 }

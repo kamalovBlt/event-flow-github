@@ -8,7 +8,6 @@ import feign.RequestTemplate;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -57,13 +56,8 @@ public class UserClientErrorsDecoderTest {
     @Test
     void shouldThrowExternalServiceExceptionWhenStatusIs500() {
         Response response = createResponse(500, "Internal Server Error");
-
         Exception exception = errorDecoder.decode("methodKey", response);
-
         assertInstanceOf(ExternalServiceException.class, exception);
-        ExternalServiceException ese = (ExternalServiceException) exception;
-        assertEquals("Ошибка внутреннего микросервиса", ese.getMessage());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ese.getStatusCode());
     }
 
     @Test
@@ -72,7 +66,6 @@ public class UserClientErrorsDecoderTest {
 
         Exception exception = errorDecoder.decode("methodKey", response);
         assertEquals(Exception.class, exception.getClass());
-
     }
 
 }

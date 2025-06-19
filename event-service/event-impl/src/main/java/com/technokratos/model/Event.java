@@ -4,7 +4,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -12,21 +12,21 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Event {
+
     private Long id;
     private String name;
     private EventCategory eventCategory;
     private String locationId;
-    private Long hallId;
+    private String hallId;
     private String description;
-    private LocalDateTime date;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private Boolean canceled;
     private String videoKey;
     private Integer popularity;
     private boolean deleted;
-
-    private Set<String> imageKeys;
-
+    private Long creatorId;
+    private List<Long> imageIds;
     private List<Artist> artists;
 
-    private List<Long> organizerIds;
 }

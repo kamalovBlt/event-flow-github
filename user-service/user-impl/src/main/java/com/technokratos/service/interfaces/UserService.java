@@ -1,6 +1,7 @@
 package com.technokratos.service.interfaces;
 
 import com.technokratos.model.User;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface UserService {
     void update(User user);
     void delete(Long id);
     User findByEmail(String email);
+    boolean isOwner(Long userId, Authentication authentication);
 }

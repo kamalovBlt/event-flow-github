@@ -5,7 +5,3 @@ subprojects {
         annotationProcessor "org.projectlombok:lombok"
     }
 }
-
-test {
-    useJUnitPlatform()
-}

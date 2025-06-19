@@ -1,10 +1,7 @@
 subprojects {
     dependencies {
         implementation "org.springframework.boot:spring-boot-starter-web"
-        compileOnly "org.projectlombok:lombok:${lombokVersion}"
-        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        compileOnly "org.projectlombok:lombok"
+        annotationProcessor "org.projectlombok:lombok"
     }
-}
-test {
-    useJUnitPlatform()
 }

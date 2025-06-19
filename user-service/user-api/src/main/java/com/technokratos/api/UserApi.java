@@ -13,7 +13,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +27,7 @@ import java.util.List;
         name = "Пользователи",
         description = "Операции с пользователями"
 )
+@Validated
 public interface UserApi {
 
     @GetMapping("/api/v1/user-service/users/{user-id}")
@@ -69,7 +75,7 @@ public interface UserApi {
     @ResponseStatus(HttpStatus.OK)
     @Hidden
     UserDetailsResponse findByEmail(
-            @RequestParam("email") String email
+            @RequestParam("email") @Email @NotBlank @Size(max = 320) String email
     );
 
     @GetMapping("/api/v1/user-service/users/{user-id}/recommendations")
@@ -118,10 +124,13 @@ public interface UserApi {
             @PathVariable("user-id") Long userId,
 
             @Parameter(description = "Номер страницы (начиная с 0)")
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "0")
+            @Size(max = 100) int page,
 
             @Parameter(description = "Размер страницы (количество пользователей на странице)")
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10")
+            @Size(max = 100)
+            int size
     );
 
     @PostMapping("/api/v1/user-service/users")
@@ -147,12 +156,12 @@ public interface UserApi {
                     )
             }
     )
-    long save(@RequestBody UserRequest userRequest);
+    long save(@Valid @RequestBody UserRequest userRequest);
 
     @PostMapping("/api/v1/user-service/users/oauth")
     @ResponseStatus(HttpStatus.CREATED)
     @Hidden
-    long saveOauthUser(@RequestBody UserWithOAuthRequest userWithOAuthRequest);
+    long saveOauthUser(@Valid @RequestBody UserWithOAuthRequest userWithOAuthRequest);
 
     @PutMapping("/api/v1/user-service/users/{user-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -188,7 +197,7 @@ public interface UserApi {
             )
             @PathVariable("user-id")
             Long id,
-            @RequestBody UserRequest userRequest
+            @Valid @RequestBody UserRequest userRequest
     );
 
     @DeleteMapping("/api/v1/user-service/users/{user-id}")

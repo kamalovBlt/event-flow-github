@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PasswordNotMatchesException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public final AuthServiceErrorResponse handlePasswordNotMatchesException(PasswordNotMatchesException exception) {
         return AuthServiceErrorResponse.builder()
                 .exceptionName("PasswordNotMatchesException")

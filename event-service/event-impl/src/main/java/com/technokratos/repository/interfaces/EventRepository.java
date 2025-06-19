@@ -2,11 +2,12 @@ package com.technokratos.repository.interfaces;
 
 import com.technokratos.model.Event;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface EventRepository {
-    long save(Event event);
+    Optional<Long> save(Event event);
 
     Optional<Event> findById(Long id);
 
@@ -16,9 +17,9 @@ public interface EventRepository {
 
     void deleteById(Long id);
 
-    List<Event> findByArtistId(Long artistId);
+    boolean existsById(Long id);
 
-    List<Event> findAllSimple(int page, int size);
+    boolean existsByTimeAndLocationIdAndHallId(String locationId, String hallId, LocalDateTime start, LocalDateTime end);
 
-    Optional<Event> findByIdSimple(Long id);
+    Optional<Long> findCreatorIdByEventId(Long eventId);
 }

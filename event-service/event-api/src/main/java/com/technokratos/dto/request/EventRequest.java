@@ -3,10 +3,13 @@ package com.technokratos.dto.request;
 import com.technokratos.dto.EventCategoryDTO;
 import com.technokratos.dto.request.ticket.TicketsRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Schema(
         description = """
@@ -29,12 +32,17 @@ public record EventRequest(
         EventCategoryDTO category,
 
         @Schema(description = "ID локации, где планируется провести мероприятие")
-        @NotNull
-        Long locationId,
+        @NotBlank
+        String locationId,
 
         @Schema(description = "ID зала локации, где планируется провести мероприятие")
+        @NotBlank
+        String hallId,
+
+        @Schema(description = "ID пользователя, от имени которого создается")
         @NotNull
-        Long hallId,
+        @Positive
+        Long userId,
 
         @Schema(description = "Время начала мероприятия", example = "2025-04-29T18:30")
         @NotNull
@@ -46,6 +54,10 @@ public record EventRequest(
 
         @Schema(implementation = TicketsRequest.class)
         @NotNull
-        TicketsRequest tickets
+        @Valid
+        TicketsRequest tickets,
+
+        @Schema(description = "Список ID артистов")
+        List<Long> artistIds
 ) {
 }

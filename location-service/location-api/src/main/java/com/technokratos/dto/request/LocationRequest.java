@@ -14,6 +14,7 @@ public record LocationRequest(
 
         @Schema(description = "Название локации")
         @NotBlank(message = "Название не может быть пустым")
+        @Size(max = 120, message = "Название не может быть длиннее 120 символов")
         String name,
 
         @Schema(description = "ID пользователя")
@@ -22,6 +23,7 @@ public record LocationRequest(
         Long userId,
 
         @Schema(description = "Описание локации")
+        @Size(max = 1500, message = "Описание не может быть длиннее 1500 символов")
         String description,
 
         @Schema(description = "Широта локации")

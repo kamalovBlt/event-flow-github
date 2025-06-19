@@ -1,55 +1,57 @@
 package com.technokratos.controller;
 
 import com.technokratos.api.EventTicketsApi;
-import com.technokratos.dto.request.ticket.TicketRequest;
+import com.technokratos.dto.request.ticket.TicketFullRequest;
 import com.technokratos.dto.response.ticket.PaymentLinkResponse;
-import com.technokratos.dto.response.ticket.TicketResponse;
+import com.technokratos.dto.response.ticket.TicketFullResponse;
 import com.technokratos.dto.response.ticket.TicketsResponse;
+import com.technokratos.service.interfaces.TicketService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 public class EventTicketsController implements EventTicketsApi {
+
+    private final TicketService ticketService;
+
     @Override
     public TicketsResponse findTickets(Long eventId) {
-        return null;
+        return ticketService.findAllByEventId(eventId);
     }
 
     @Override
-    public TicketResponse findTicketById(Long eventId, Long ticketId) {
-        return null;
+    public TicketFullResponse findTicketById(Long eventId, Long ticketId) {
+        return ticketService.findById(eventId, ticketId);
     }
 
     @Override
-    @PreAuthorize("hasAnyAuthority('USER', 'ORGANIZER', 'PLATFORM', 'ADMIN')")
+    @PreAuthorize("hasAuthority('USER')")
     public PaymentLinkResponse purchase(Long eventId, Long ticketId) {
         return null;
     }
 
     @Override
-    @PreAuthorize("hasAnyAuthority('ORGANIZER', 'ADMIN')")
-    /*TODO: @PreAuthorize("(hasAuthority('ORGANIZER') and @eventService.isOwner(#id, principal)) or hasAuthority('ADMIN')")
-    тут #id ID мероприятия, principal это ID пользователя, он автоматически берется
-     */
-    public void addTicket(Long eventId, TicketRequest ticketRequest) {
-
+    @PreAuthorize("(isAuthenticated() and hasAuthority('ORGANIZER') and @eventServiceImpl.isCreator(#eventId, authentication)) or hasAuthority('ADMIN')")
+    @Validated
+    public Long addTicket(Long eventId, @Valid TicketFullRequest ticketFullRequest) {
+        return ticketService.save(eventId, ticketFullRequest);
     }
 
     @Override
-    @PreAuthorize("hasAnyAuthority('ORGANIZER', 'ADMIN')")
-    /*TODO: @PreAuthorize("(hasAuthority('ORGANIZER') and @eventService.isOwner(#id, principal)) or hasAuthority('ADMIN')")
-    тут #id ID мероприятия, principal это ID пользователя, он автоматически берется
-     */
-    public void updateTicket(Long eventId, Long ticketId, TicketRequest ticketRequest) {
-
+    @PreAuthorize("(isAuthenticated() and hasAuthority('ORGANIZER') and @eventServiceImpl.isCreator(#eventId, authentication)) or hasAuthority('ADMIN')")
+    @Validated
+    public void updateTicket(Long eventId, Long ticketId, @Valid TicketFullRequest ticketFullRequest) {
+        ticketService.update(eventId, ticketId, ticketFullRequest);
     }
 
     @Override
-    @PreAuthorize("hasAnyAuthority('ORGANIZER', 'ADMIN')")
-    /*TODO: @PreAuthorize("(hasAuthority('ORGANIZER') and @eventService.isOwner(#id, principal)) or hasAuthority('ADMIN')")
-    тут #id ID мероприятия, principal это ID пользователя, он автоматически берется
-     */
+    @PreAuthorize("(isAuthenticated() and hasAuthority('ORGANIZER') and @eventServiceImpl.isCreator(#eventId, authentication)) or hasAuthority('ADMIN')")
     public void deleteTicket(Long eventId, Long ticketId) {
-
+        ticketService.deleteById(eventId, ticketId);
     }
+
 }

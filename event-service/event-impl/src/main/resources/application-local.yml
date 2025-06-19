@@ -1,5 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://event-postgres:5432/event-service-db
-    username: local
-    password: locallocal

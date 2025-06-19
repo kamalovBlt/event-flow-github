@@ -3,7 +3,7 @@ package com.technokratos.api;
 import com.technokratos.dto.EventCategoryDTO;
 import com.technokratos.dto.request.EventRequest;
 import com.technokratos.dto.request.sort.SortParameterRequest;
-import com.technokratos.dto.response.EventResponse;
+import com.technokratos.dto.response.event.EventResponse;
 import com.technokratos.dto.response.EventServiceErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,7 +73,10 @@ public interface EventApi {
 
             @RequestParam(value = "keywords", required = false)
             @Parameter(description = "Ключевые слова для поиска в названии или описании мероприятия")
-            String keywords
+            String keywords,
+
+            @RequestParam(defaultValue = "0") @Parameter(description = "Номер страницы (с нуля)") int page,
+            @RequestParam(defaultValue = "10") @Parameter(description = "Размер страницы") int size
     );
 
     @GetMapping("/{event-id}")
@@ -192,7 +196,7 @@ public interface EventApi {
                     )
             }
     )
-    Long save(EventRequest eventRequest);
+    Long save(@Valid @RequestBody EventRequest eventRequest);
 
     @PutMapping("/{event-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -239,7 +243,7 @@ public interface EventApi {
             @PathVariable("event-id")
             @Parameter(description = "ID меропрития", required = true)
             Long eventId,
-            EventRequest eventRequest
+            @Valid @RequestBody EventRequest eventRequest
     );
 
     @DeleteMapping("/{event-id}")
@@ -247,7 +251,7 @@ public interface EventApi {
     @Operation(
             summary = "Удаление мероприятия",
             description = """
-                    Принимает ID мероприятия объект EventRequest.
+                    Принимает ID мероприятия.
                     Удаляет все, что связано с мероприятием.
                     Доступ: ORGANIZER если создавал, ADMIN
                     """,

@@ -1,7 +1,6 @@
 spring:
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.xml
   jpa:
     hibernate:
       ddl-auto: validate
@@ -16,4 +15,7 @@ spring:
     password: password
     hikari:
       maximum-pool-size: 2
+  cloud:
+    consul:
+      enabled: false
 

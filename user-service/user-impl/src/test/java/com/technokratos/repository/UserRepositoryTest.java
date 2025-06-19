@@ -1,14 +1,15 @@
 package com.technokratos.repository;
 
+import com.technokratos.config.SecurityTestConfig;
 import com.technokratos.model.AuthProvider;
 import com.technokratos.model.Role;
 import com.technokratos.model.User;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +17,17 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
-@SpringBootTest
+@SpringBootTest(classes = SecurityTestConfig.class)
 @ActiveProfiles(profiles = "test")
 class UserRepositoryTest{
 
     @Autowired
     private UserRepository userRepository;
+
+    @BeforeEach
+    void setUp(){
+        userRepository.deleteAll();
+    }
 
     @Test
     void shouldFindByEmailBecauseDeletedFalse() {
@@ -182,6 +188,44 @@ class UserRepositoryTest{
     @Test
     void shouldReturnFalseIfUserDoesNotExist() {
         Boolean exists = userRepository.existsByIdAndDeletedFalse(999999L);
+        assertThat(exists).isFalse();
+    }
+
+    @Test
+    void shouldReturnTrueIfEmailExistsAndNotDeleted() {
+        User user = User.builder()
+                .password("pass123")
+                .email("another@mail.com")
+                .firstName("Petr")
+                .roles(List.of(Role.USER))
+                .authProvider(AuthProvider.GOOGLE)
+                .deleted(false)
+                .build();
+        userRepository.save(user);
+
+        boolean exists = userRepository.existsByEmailAndDeletedFalse("another@mail.com");
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseIfEmailExistsButDeleted() {
+        User user = User.builder()
+                .password("pass123")
+                .email("another@mail.com")
+                .firstName("Petr")
+                .roles(List.of(Role.USER))
+                .authProvider(AuthProvider.GOOGLE)
+                .deleted(true)
+                .build();
+        userRepository.save(user);
+
+        boolean exists = userRepository.existsByEmailAndDeletedFalse("another@mail.com");
+        assertThat(exists).isFalse();
+    }
+
+    @Test
+    void shouldReturnFalseIfEmailDoesNotExist() {
+        boolean exists = userRepository.existsByEmailAndDeletedFalse("nonexistent@test.com");
         assertThat(exists).isFalse();
     }
 }

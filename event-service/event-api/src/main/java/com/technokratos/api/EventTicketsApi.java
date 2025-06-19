@@ -1,9 +1,9 @@
 package com.technokratos.api;
 
-import com.technokratos.dto.request.ticket.TicketRequest;
+import com.technokratos.dto.request.ticket.TicketFullRequest;
 import com.technokratos.dto.response.EventServiceErrorResponse;
 import com.technokratos.dto.response.ticket.PaymentLinkResponse;
-import com.technokratos.dto.response.ticket.TicketResponse;
+import com.technokratos.dto.response.ticket.TicketFullResponse;
 import com.technokratos.dto.response.ticket.TicketsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,7 +68,7 @@ public interface EventTicketsApi {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Билет найден",
-                            content = @Content(schema = @Schema(implementation = TicketResponse.class))
+                            content = @Content(schema = @Schema(implementation = TicketFullResponse.class))
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -91,7 +92,7 @@ public interface EventTicketsApi {
                     )
             }
     )
-    TicketResponse findTicketById(
+    TicketFullResponse findTicketById(
             @Parameter @PathVariable("event-id") Long eventId,
             @Parameter @PathVariable("ticket-id") Long ticketId
     );
@@ -152,7 +153,7 @@ public interface EventTicketsApi {
                     @ApiResponse(
                             responseCode = "201",
                             description = "Билет успешно добавлен",
-                            content = @Content(schema = @Schema(implementation = TicketsResponse.class))
+                            content = @Content(schema = @Schema(implementation = TicketFullRequest.class))
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -176,10 +177,10 @@ public interface EventTicketsApi {
                     )
             }
     )
-    void addTicket(
+    Long addTicket(
             @Parameter @PathVariable("event-id") Long eventId,
-            TicketRequest ticketRequest
-    );
+            @Valid @RequestBody TicketFullRequest ticketFullRequest
+            );
 
     @PutMapping("/{event-id}/tickets/{ticket-id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -189,8 +190,7 @@ public interface EventTicketsApi {
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "Информация о билете успешно обновлена",
-                            content = @Content(schema = @Schema(implementation = TicketsResponse.class))
+                            description = "Информация о билете успешно обновлена"
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -217,7 +217,7 @@ public interface EventTicketsApi {
     void updateTicket(
             @Parameter @PathVariable("event-id") Long eventId,
             @Parameter @PathVariable("ticket-id") Long ticketId,
-            @RequestBody TicketRequest ticketRequest
+            @Valid @RequestBody TicketFullRequest ticketFullRequest
     );
 
     @DeleteMapping("/{event-id}/tickets/{ticket-id}")

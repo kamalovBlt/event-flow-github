@@ -1,7 +1,8 @@
 package com.technokratos.dto.response.ticket;
 
-import com.technokratos.dto.TicketCategoryDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.math.BigDecimal;
 
 @Schema(description = """
         Модель билета
@@ -21,11 +22,8 @@ public record TicketResponse(
         @Schema(description = "Продан ли билет", defaultValue = "false")
         Boolean isSell,
 
-        @Schema(implementation = TicketCategoryDTO.class)
-        TicketCategoryDTO category,
-
         @Schema(description = "Стоимость билета в рублях")
-        int cost
+        BigDecimal cost
 
 ) {
 }

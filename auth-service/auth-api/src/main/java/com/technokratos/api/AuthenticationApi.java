@@ -1,9 +1,6 @@
 package com.technokratos.api;
 
-import com.technokratos.dto.request.AuthenticationRequest;
-import com.technokratos.dto.request.GoogleAuthorizationCodeRequest;
-import com.technokratos.dto.request.GoogleRegisterRequest;
-import com.technokratos.dto.request.RefreshTokenRequest;
+import com.technokratos.dto.request.*;
 import com.technokratos.dto.response.AuthServiceErrorResponse;
 import com.technokratos.dto.response.AuthenticationResponse;
 import com.technokratos.dto.response.GoogleUserNotFoundInformationResponse;
@@ -14,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,20 +20,32 @@ import java.util.Map;
 @Tag(name = "Аутентификация", description = "Операции входа, обновления токена и OAuth")
 public interface AuthenticationApi {
 
-    @Operation(summary = "Вход с использованием логина и пароля")
+    @Operation(summary = "Вход с использованием логина и пароля", description = """
+            Отправляет 4-значный код на почту указанном в запросе, далее нужно делать /verify
+            """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Успешная аутентификация",
+            @ApiResponse(responseCode = "201", description = "Код отправлен на почту"),
+            @ApiResponse(responseCode = "404", description = "Неправильный логин/неправильный формат учетных данных",
+                    content = @Content(schema = @Schema(implementation = AuthServiceErrorResponse.class))),
+    })
+    @PostMapping("/api/v1/auth-service/auth/login")
+    @ResponseStatus(HttpStatus.CREATED)
+    void login(
+            @Valid @RequestBody AuthenticationRequest authenticationRequest
+    );
+
+    @Operation(summary = "Подтверждение кода верификации")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Успешный вход",
                     content = @Content(schema = @Schema(implementation = AuthenticationResponse.class))),
             @ApiResponse(responseCode = "401", description = "Неверные учетные данные",
                     content = @Content(schema = @Schema(implementation = AuthServiceErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Неправильный логин/неправильный формат учетных данных",
                     content = @Content(schema = @Schema(implementation = AuthServiceErrorResponse.class))),
     })
-    @PostMapping("/api/v1/auth-service/auth/login")
+    @PostMapping("/api/v1/auth-service/auth/verify")
     @ResponseStatus(HttpStatus.CREATED)
-    AuthenticationResponse login(
-            @RequestBody AuthenticationRequest authenticationRequest
-    );
+    AuthenticationResponse verify(@Valid @RequestBody VerificationRequest verificationRequest);
 
     @Operation(summary = "Обновить access токен с использованием refresh токена")
     @ApiResponses(value = {

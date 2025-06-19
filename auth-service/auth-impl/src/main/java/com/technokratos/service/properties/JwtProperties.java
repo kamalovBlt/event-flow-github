@@ -24,15 +24,23 @@ public class JwtProperties {
      * */
     private final long refreshTokenValidity;
 
+    /**Время действия кода подтверждения.
+     * В properties - в минутах.
+     * В коде - в миллисекундах.
+     * */
+    private final long verifyCodeValidity;
+
     public JwtProperties(
             @Value("${jwt.private-secret-key}") String privateSecretKey,
             @Value("${jwt.public-secret-key}") String publicSecretKey,
             @Value("${jwt.access-token-validity}") long accessTokenValidity,
-            @Value("${jwt.refresh-token-validity}") long refreshTokenValidity
+            @Value("${jwt.refresh-token-validity}") long refreshTokenValidity,
+            @Value("${jwt.verify-code-validity}") long verifyCodeValidity
     ) {
         this.privateSecretKey = privateSecretKey;
         this.publicSecretKey = publicSecretKey;
         this.accessTokenValidity = accessTokenValidity * 60 * 1000;
         this.refreshTokenValidity = refreshTokenValidity * 60 * 1000;
+        this.verifyCodeValidity = verifyCodeValidity * 60 * 1000;
     }
 }

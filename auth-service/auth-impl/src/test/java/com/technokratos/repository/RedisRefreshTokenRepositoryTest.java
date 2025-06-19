@@ -3,6 +3,7 @@ package com.technokratos.repository;
 import com.technokratos.config.RedisConfiguration;
 import com.technokratos.config.RedisTestConfiguration;
 import com.technokratos.repository.impl.RedisRefreshTokenRepository;
+import com.technokratos.service.properties.JwtProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
         RedisRefreshTokenRepository.class,
         RedisTestConfiguration.class,
-        RedisConfiguration.class
+        RedisConfiguration.class,
+        JwtProperties.class,
 })
 @ActiveProfiles("test")
 public class RedisRefreshTokenRepositoryTest {

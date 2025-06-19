@@ -1,5 +1,6 @@
 package com.technokratos;
 
+import com.technokratos.config.KafkaMockConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
+@SpringBootTest(classes = KafkaMockConfig.class)
 @ActiveProfiles(profiles = "test")
 @Testcontainers
 public class LocationMigrationTest {

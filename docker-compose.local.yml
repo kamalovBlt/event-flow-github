@@ -131,33 +131,6 @@ services:
     networks:
       - event-flow-network
 
-  notifications-rabbit:
-    image: rabbitmq:4.0-management-alpine
-    environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
-      RABBITMQ_DEFAULT_VHOST: local
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
-    networks:
-      - event-flow-network
-
-  notification-service:
-    build:
-      context: ./notification-service
-    container_name: notification-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=local
-    ports:
-      - "8085:8080"
-    depends_on:
-      - consul
-    networks:
-      - event-flow-network
-
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper

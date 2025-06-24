@@ -7,7 +7,6 @@ import com.technokratos.dto.request.EventRequest;
 import com.technokratos.dto.request.ticket.TicketRequest;
 import com.technokratos.dto.request.ticket.TicketsRequest;
 import com.technokratos.dto.response.event.EventResponse;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

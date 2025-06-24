@@ -6,6 +6,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.technokratos.exception.JwtGenerationFailedException;
 import com.technokratos.model.JwtToken;
+import com.technokratos.model.JwtTokenWithId;
 import com.technokratos.repository.impl.RedisRefreshTokenRepository;
 import com.technokratos.service.impl.JwtServiceImpl;
 import com.technokratos.service.properties.JwtProperties;
@@ -91,7 +92,7 @@ public class JwtServiceImplTest {
 
         when(refreshTokenRepository.findByEmail(email)).thenReturn(refreshToken);
 
-        JwtToken newTokens = jwtService.generateTokensFromRefreshToken(refreshToken);
+        JwtTokenWithId newTokens = jwtService.generateTokensFromRefreshToken(refreshToken);
 
         assertNotNull(newTokens);
         assertNotNull(newTokens.accessToken());
@@ -101,7 +102,7 @@ public class JwtServiceImplTest {
 
     }
 
-    void validateTokens(Long id, String email, String scope, JwtToken jwtToken) throws ParseException {
+    void validateTokens(Long id, String email, String scope, JwtTokenWithId jwtToken) throws ParseException {
         SignedJWT accessToken = SignedJWT.parse(jwtToken.accessToken());
         assertNotNull(accessToken);
         JWTClaimsSet accessTokenJwtClaimsSet = accessToken.getJWTClaimsSet();

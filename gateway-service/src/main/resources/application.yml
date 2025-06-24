@@ -36,6 +36,7 @@ spring:
           predicates:
             - Path=/api/v1/location-service/**
 
+
 springdoc:
   api-docs-urls: >
     http://user-service:8080/api/v1/user-service/v3/api-docs,
@@ -43,3 +44,6 @@ springdoc:
     http://auth-service:8080/api/v1/auth-service/v3/api-docs,
     http://location-service:8080/api/v1/location-service/v3/api-docs
 
+
+frontend:
+  domain: ${FRONTEND_DOMAIN}

@@ -12,6 +12,7 @@ import com.technokratos.dto.response.AuthenticationResponse;
 import com.technokratos.dto.response.UserDetailsResponse;
 import com.technokratos.exception.*;
 import com.technokratos.model.JwtToken;
+import com.technokratos.model.JwtTokenWithId;
 import com.technokratos.repository.api.VerifyCodeRepository;
 import com.technokratos.service.api.AuthenticationService;
 import com.technokratos.service.api.GoogleOAuthService;
@@ -65,15 +66,15 @@ public class JwtAuthenticationService implements AuthenticationService {
                         .map(RoleDTO::toString)
                         .toList()
         );
-        return new AuthenticationResponse(jwtToken.accessToken(), jwtToken.refreshToken());
+        return new AuthenticationResponse(jwtToken.accessToken(), jwtToken.refreshToken(), userDetails.id());
     }
 
 
 
     @Override
     public AuthenticationResponse refresh(String refreshToken) {
-        JwtToken jwtToken = jwtService.generateTokensFromRefreshToken(refreshToken);
-        return new AuthenticationResponse(jwtToken.accessToken(), jwtToken.refreshToken());
+        JwtTokenWithId jwtToken = jwtService.generateTokensFromRefreshToken(refreshToken);
+        return new AuthenticationResponse(jwtToken.accessToken(), jwtToken.refreshToken(), jwtToken.id());
     }
 
     @Override
@@ -94,7 +95,7 @@ public class JwtAuthenticationService implements AuthenticationService {
                 userDetails.email(),
                 userDetails.roles().stream().map(RoleDTO::toString).toList()
         );
-        return new AuthenticationResponse(jwtToken.accessToken(), jwtToken.refreshToken());
+        return new AuthenticationResponse(jwtToken.accessToken(), jwtToken.refreshToken(), userDetails.id());
     }
 
     @Override
@@ -118,7 +119,7 @@ public class JwtAuthenticationService implements AuthenticationService {
                     userDetails.email(),
                     userDetails.roles().stream().map(RoleDTO::toString).toList()
             );
-            return new AuthenticationResponse(jwtToken.accessToken(), jwtToken.refreshToken());
+            return new AuthenticationResponse(jwtToken.accessToken(), jwtToken.refreshToken(), userDetails.id());
         }
         throw new UserAlreadyExistsException("Пользователь существует");
     }

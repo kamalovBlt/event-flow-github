@@ -6,6 +6,7 @@ import com.technokratos.dto.response.ticket.PaymentLinkResponse;
 import com.technokratos.dto.response.ticket.TicketFullResponse;
 import com.technokratos.dto.response.ticket.TicketsResponse;
 import com.technokratos.service.interfaces.TicketService;
+import com.technokratos.service.interfaces.YooMoneyPaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventTicketsController implements EventTicketsApi {
 
     private final TicketService ticketService;
+    private final YooMoneyPaymentService yooMoneyPaymentService;
 
     @Override
     public TicketsResponse findTickets(Long eventId) {
@@ -31,7 +33,7 @@ public class EventTicketsController implements EventTicketsApi {
     @Override
     @PreAuthorize("hasAuthority('USER')")
     public PaymentLinkResponse purchase(Long eventId, Long ticketId) {
-        return null;
+        return new PaymentLinkResponse(yooMoneyPaymentService.generatePaymentLink(ticketId, eventId));
     }
 
     @Override

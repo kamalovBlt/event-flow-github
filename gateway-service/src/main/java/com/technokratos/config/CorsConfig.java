@@ -17,8 +17,10 @@ import java.util.List;
 public class CorsConfig {
 
     @Bean
-    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource));
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http, CorsConfigurationSource corsConfigurationSource){
+        http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource));
         return http.build();
     }
 

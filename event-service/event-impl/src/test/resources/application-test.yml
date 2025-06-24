@@ -12,4 +12,8 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/changelog-master.xml
 
+yandex:
+  s3:
 
+
+yoomoney:

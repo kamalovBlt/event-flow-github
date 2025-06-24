@@ -9,6 +9,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.technokratos.exception.JwtGenerationFailedException;
 import com.technokratos.exception.RefreshTokenNotValidException;
 import com.technokratos.model.JwtToken;
+import com.technokratos.model.JwtTokenWithId;
 import com.technokratos.repository.api.RefreshTokenRepository;
 import com.technokratos.service.api.JwtService;
 import com.technokratos.service.properties.JwtProperties;
@@ -95,7 +96,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public JwtToken generateTokensFromRefreshToken(String refreshToken) {
+    public JwtTokenWithId generateTokensFromRefreshToken(String refreshToken) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(refreshToken);
             signedJWT.verify(new RSASSAVerifier(privateKey));
@@ -115,7 +116,8 @@ public class JwtServiceImpl implements JwtService {
             Long userId = (Long) signedJWT.getJWTClaimsSet().getClaim("user-id");
             String scope = (String) signedJWT.getJWTClaimsSet().getClaim("scope");
             List<String> roles = Arrays.stream(scope.split(" ")).toList();
-            return generateTokens(userId, email, roles);
+            JwtToken jwtToken = generateTokens(userId, email, roles);
+            return new JwtTokenWithId(jwtToken.accessToken(), jwtToken.refreshToken(), userId);
         } catch (ParseException e) {
             throw new RefreshTokenNotValidException("Ошибка при парсинге токена");
         } catch (JOSEException e) {

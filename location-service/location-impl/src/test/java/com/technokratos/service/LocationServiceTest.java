@@ -16,7 +16,6 @@ import com.technokratos.repository.HallRepository;
 import com.technokratos.repository.LocationRepository;
 import com.technokratos.service.impl.LocationServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;

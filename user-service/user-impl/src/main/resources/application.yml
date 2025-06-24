@@ -13,7 +13,9 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://auth-service:8080/.well-known/jwks.json
-
+  jpa:
+    hibernate:
+      ddl-auto: validate
 
 springdoc:
   api-docs:

@@ -3,7 +3,6 @@ package com.technokratos.controller;
 import com.technokratos.config.SecurityTestConfig;
 import com.technokratos.dto.request.ArtistRequest;
 import com.technokratos.dto.response.artist.ArtistResponse;
-import com.technokratos.repository.interfaces.ArtistRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,10 @@
 spring:
 
   mail:
-    host: smtp.gmail.com
+    host:
     port: 587
-    username: mail.eventflow@gmail.com
-    password: hgrr vafg yxgr mkle
+    username:
+    password:
     properties:
       mail:
         smtp:

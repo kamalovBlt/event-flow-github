@@ -7,6 +7,8 @@ public record AuthenticationResponse(
         @Schema(description = "Access токен")
         String accessToken,
         @Schema(description = "Refresh токен")
-        String refreshToken
+        String refreshToken,
+        @Schema(description = "Id пользователя")
+        Long userId
 ) {
 }

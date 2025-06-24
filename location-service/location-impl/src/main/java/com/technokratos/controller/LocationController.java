@@ -21,13 +21,11 @@ public class LocationController implements LocationApi {
     private final LocationService locationService;
 
     @Override
-    @PreAuthorize("hasAnyAuthority('ORGANIZER', 'PLATFORM', 'ADMIN')")
     public LocationResponse findById(String id) {
         return locationService.findById(id);
     }
 
     @Override
-    @PreAuthorize("hasAnyAuthority('ORGANIZER', 'PLATFORM', 'ADMIN')")
     public List<LocationShortResponse> getRecommendedLocations(int page, int size) {
         return locationService.getRecommendedLocations(page, size);
     }

@@ -12,6 +12,7 @@ import com.technokratos.exception.BadCredentialsException;
 import com.technokratos.exception.PasswordNotMatchesException;
 import com.technokratos.exception.UserNotFoundException;
 import com.technokratos.model.JwtToken;
+import com.technokratos.model.JwtTokenWithId;
 import com.technokratos.repository.api.VerifyCodeRepository;
 import com.technokratos.service.api.GoogleOAuthService;
 import com.technokratos.service.api.JwtService;
@@ -219,7 +220,7 @@ public class JwtAuthenticationServiceTest {
     }
 
     void prepareJwtServiceGenerateTokensFromRefreshToken(String token) {
-        when(jwtService.generateTokensFromRefreshToken(token)).thenReturn(new JwtToken("access", "refresh"));
+        when(jwtService.generateTokensFromRefreshToken(token)).thenReturn(new JwtTokenWithId("access", "refresh", 1L));
     }
 
 }

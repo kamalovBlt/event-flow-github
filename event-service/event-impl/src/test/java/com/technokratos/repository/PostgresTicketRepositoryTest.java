@@ -3,7 +3,6 @@ package com.technokratos.repository;
 import com.technokratos.model.Ticket;
 import com.technokratos.model.TicketCategory;
 import com.technokratos.repository.interfaces.TicketRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

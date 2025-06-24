@@ -32,7 +32,7 @@ public class ConsulIpChecker {
         if (System.currentTimeMillis() - lastUpdated < TTL) return;
 
         Set<String> newIps = new HashSet<>();
-        List<String> serviceNames = List.of("user-service", "event-service", "location-service");
+        List<String> serviceNames = List.of("user-service", "event-service", "location-service", "auth-service");
 
         for (String serviceName : serviceNames) {
             Response<List<HealthService>> response = consulClient.getHealthServices(
